@@ -1,0 +1,14 @@
+{
+  "include": ["src"],
+  "compilerOptions": {
+     "lib": ["es2015"],
+    "module": "commonjs",
+    "target": "es6",
+    "moduleResolution": "node",
+    "declaration": true, // generate .d.ts files
+    "sourceMap": true, // generate source map
+    "outDir": "dist", // output compiled js, d.ts, and source map to dist folder
+    "strict": true,
+    "esModuleInterop": true
+  }
+}
