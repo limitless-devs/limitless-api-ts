@@ -19,6 +19,15 @@ export interface MarketState {
     bidPrice: anchor.BN,
     baseDecimals: number,
     quoteDecimals: number,
+    floorPrice: anchor.BN,
+    floorQuanitityC: anchor.BN,
+    floorQuantityB: anchor.BN,
+    floorQuantity: anchor.BN,
+    highestFloorQuantity: anchor.BN,
+    totalMoved: anchor.BN,
+    floorPoolSize: anchor.BN,
+    basePoolSize: anchor.BN,
+    quotePoolSize: anchor.BN,
     startQ: anchor.BN,
     totalSoldBase: anchor.BN,
     totalSoldQuote: anchor.BN,
@@ -71,13 +80,14 @@ export interface SellParams {
   userBaseToken: anchor.web3.PublicKey,
   userQuoteToken: anchor.web3.PublicKey,
   program: anchor.Program<Limitless>,
-  confirmOpts: anchor.web3.ConfirmOptions
+  confirmOpts: anchor.web3.ConfirmOptions,
+  execResponse: boolean
 }
 export interface SellRes {
   txSig: string,
-  txResponse: anchor.web3.TransactionResponse
-  proceeds: number,
-  quantity: number,
+  txResponse?: anchor.web3.TransactionResponse
+  proceeds?: number,
+  quantity?: number,
 }
 export interface BuyParams {
   marketName: string,
@@ -86,11 +96,12 @@ export interface BuyParams {
   userBaseToken: anchor.web3.PublicKey,
   userQuoteToken: anchor.web3.PublicKey,
   program: anchor.Program<Limitless>,
-  confirmOpts: anchor.web3.ConfirmOptions
+  confirmOpts: anchor.web3.ConfirmOptions,
+  execResponse: boolean
 }
 export interface BuyRes {
   txSig: string,
-  txResponse: anchor.web3.TransactionResponse
-  cost: number,
-  quantity: number,
+  txResponse?: anchor.web3.TransactionResponse,
+  cost?: number,
+  quantity?: number,
 }

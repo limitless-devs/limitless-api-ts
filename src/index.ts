@@ -69,52 +69,8 @@ export async function getMarket(
     [marketTrackerBaseAddress.toBuffer(), Buffer.from(marketName)],
     program.programId
   );
-  let marketState = await program.account.marketState.fetch(marketStateAddress, commitment);
-  return {
-    baseMintAddress: marketState.baseMintAddress,
-    baseMintTokenAddress: marketState.baseMintTokenAddress,
-    quoteMintAddress: marketState.quoteMintAddress,
-    quoteMintTokenAddress: marketState.quoteMintTokenAddress,
-    quoteMintFloorTokenAddress: marketState.quoteMintFloorTokenAddress,
-    platformFeeVaultAddress: marketState.platformFeeVaultAddress,
-    maxCqd: marketState.maxCqd,
-    cqd: marketState.cqd,
-    askOffset: marketState.askOffset,
-    bidOffset: marketState.bidOffset,
-    spread: marketState.spread,
-    minSize: marketState.minSize,
-    gradient: marketState.gradient,
-    askPrice: marketState.askPrice,
-    bidPrice: marketState.bidPrice,
-    baseDecimals: marketState.baseDecimals,
-    quoteDecimals: marketState.quoteDecimals,
-    startQ: marketState.startQ,
-    totalSoldBase: marketState.totalSoldBase,
-    totalSoldQuote: marketState.totalSoldQuote,
-    totalBoughtBase: marketState.totalBoughtBase,
-    totalBoughtQuote: marketState.totalBoughtQuote,
-    totalSells: marketState.totalSells,
-    totalBuys: marketState.totalBuys,
-    totalMinted: marketState.totalMinted,
-    totalBurned: marketState.totalBurned,
-    totalBurnCost: marketState.totalBurnCost,
-    id: marketState.id,
-    latestTradeBuy: marketState.latestTradeBuy,
-    latestTradeQuantity: marketState.latestTradeQuantity,
-    latestTradeCost: marketState.latestTradeCost,
-    latestTradeWallet: marketState.latestTradeWallet,
-    creator: marketState.creator,
-    launchDate: marketState.launchDate,
-    preMint: marketState.preMint,
-    preMintClaimed: marketState.preMintClaimed,
-    continuousMint: marketState.continuousMint,
-    creatorMinted: marketState.creatorMinted,
-    buyFee: marketState.buyFee,
-    sellFee: marketState.sellFee,
-    receiveAddress: marketState.receiveAddress,
-    platformFee: marketState.platformFee,
-    index: marketState.index
-  } as MarketState;
+  let marketState: any = await program.account.marketState.fetch(marketStateAddress, commitment);
+  return marketState as MarketState;
 }
 
 //commands
@@ -191,6 +147,9 @@ export async function createMarket(
 export async function buy(
   params: BuyParams
 ): Promise<BuyRes> {
+  if (params.execResponse && (params.confirmOpts.commitment != "finalized" && params.confirmOpts.commitment != "confirmed")) {
+    params.confirmOpts.commitment = "confirmed"
+  }
   let [marketTrackerBaseAddress, _marketTrackerBaseBump] = await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from(TRACKER_ID)],
     params.program.programId
@@ -222,24 +181,37 @@ export async function buy(
       clock: anchor.web3.SYSVAR_CLOCK_PUBKEY
     })
     .rpc(params.confirmOpts);
-  let getTxRes = await params.program.provider.connection.getTransaction(tx, { commitment: "confirmed" })
-  let logMsg = "";
-  getTxRes?.meta?.logMessages?.forEach((x : string) => {
-    if (x.includes(":=")) {
-      logMsg = x;
-    }
-  })
-  let logVals = logMsg.slice(logMsg.indexOf(":=") + ":=".length).split(",");
-  return {
-    txSig: tx,
-    txResponse: getTxRes,
-    cost: deNormalize(Number(logVals[0]), marketState.quoteDecimals),
-    quantity: deNormalize(Number(logVals[1]), marketState.quoteDecimals)
-  } as BuyRes
+  if (params.execResponse) {
+    let getTxRes = await params.program.provider.connection.getTransaction(tx, { commitment: "confirmed" })
+    let logMsg = "";
+    getTxRes?.meta?.logMessages?.forEach((x: string) => {
+      if (x.includes(":=")) {
+        logMsg = x;
+      }
+    })
+    let logVals = logMsg.slice(logMsg.indexOf(":=") + ":=".length).split(",");
+    return {
+      txSig: tx,
+      txResponse: getTxRes,
+      cost: deNormalize(Number(logVals[0]), marketState.quoteDecimals),
+      quantity: deNormalize(Number(logVals[1]), marketState.quoteDecimals)
+    } as BuyRes
+  } else {
+    return {
+      txSig: tx,
+      txResponse: undefined,
+      cost: undefined,
+      quantity: undefined
+    } as BuyRes
+  }
+
 }
 export async function sell(
   params: SellParams
-) : Promise<SellRes> {
+): Promise<SellRes> {
+  if (params.execResponse && (params.confirmOpts.commitment != "finalized" && params.confirmOpts.commitment != "confirmed")) {
+    params.confirmOpts.commitment = "confirmed"
+  }
   let [marketTrackerBaseAddress, _marketTrackerBaseBump] = await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from(TRACKER_ID)],
     params.program.programId
@@ -271,9 +243,10 @@ export async function sell(
       clock: anchor.web3.SYSVAR_CLOCK_PUBKEY
     })
     .rpc(params.confirmOpts);
+  if (params.execResponse) {
     let getTxRes = await params.program.provider.connection.getTransaction(tx, { commitment: "confirmed" })
     let logMsg = "";
-    getTxRes?.meta?.logMessages?.forEach((x : string) => {
+    getTxRes?.meta?.logMessages?.forEach((x: string) => {
       if (x.includes(":=")) {
         logMsg = x;
       }
@@ -285,6 +258,15 @@ export async function sell(
       proceeds: deNormalize(Number(logVals[0]), marketState.quoteDecimals),
       quantity: deNormalize(Number(logVals[1]), marketState.quoteDecimals)
     } as SellRes
+  } else {
+    return {
+      txSig: tx,
+      txResponse: undefined,
+      proceeds: undefined,
+      quantity: undefined
+    } as SellRes
+  }
+
 }
 
 //calculations
