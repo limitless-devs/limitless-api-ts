@@ -1,8 +1,10 @@
 ## limitless-api-ts
 
 ```
-TODO: yarn
-TODO: npm
+npm i limitless-api-ts
+```
+```
+yarn add limitless-api-ts
 ```
 
 This typescript api client will allow you to create, manage and trade markets on the Limitless Protocol. 
