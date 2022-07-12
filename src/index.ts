@@ -266,7 +266,146 @@ export async function sell(
       quantity: undefined
     } as SellRes
   }
-
+}
+export async function transferFees(
+  marketName: string,
+  program: anchor.Program<Limitless>,
+  commitment: anchor.web3.Commitment,
+) : Promise<string> {
+  let [marketTrackerBaseAddress, marketTrackerBaseBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [Buffer.from(TRACKER_ID)],
+    program.programId
+  );
+  //get first market - to market
+  let [marketTrackerAddress, marketTrackerBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [marketTrackerBaseAddress.toBuffer(), Buffer.from("1")],
+    program.programId
+  );
+  let toMarketTrackerAddress = await program.account.marketTracker.fetch(marketTrackerAddress);
+  let toMarket = await program.account.marketState.fetch(toMarketTrackerAddress.marketKey);
+  //from market
+  let [marketStateAddress, marketBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [marketTrackerBaseAddress.toBuffer(), Buffer.from(marketName)],
+    program.programId
+  );
+  let fromMarket = await program.account.marketState.fetch(marketStateAddress);
+  const tx = await program.methods
+      .transferFees()
+      .accounts({
+        marketTrackerBase: marketTrackerBaseAddress,
+        toMarketState: toMarketTrackerAddress.marketKey,
+        toQuoteTokenFloorVault: toMarket.quoteMintFloorTokenAddress,
+        fromMarketState: marketStateAddress,
+        fromPlatformFeeVault: fromMarket.platformFeeVaultAddress,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc({commitment});
+  return tx
+}
+export async function updateLaunchDate(
+  newDate: Date,
+  marketName: string,
+  program: anchor.Program<Limitless>,
+  commitment: anchor.web3.Commitment,
+) : Promise<string> {
+  let [marketTrackerBaseAddress, marketTrackerBaseBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [Buffer.from(TRACKER_ID)],
+    program.programId
+  );
+  let [marketStateAddress, toMarketBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [marketTrackerBaseAddress.toBuffer(), Buffer.from(marketName)],
+    program.programId
+  );
+  const start = newDate.getTime() / 1000;
+  const tx = await program.methods
+  .updateLaunchDate(new anchor.BN(start))
+  .accounts({
+    user: program.provider.publicKey,
+    marketTrackerBase: marketTrackerBaseAddress,
+    marketState: marketStateAddress,
+    systemProgram: anchor.web3.SystemProgram.programId,
+    clock: anchor.web3.SYSVAR_CLOCK_PUBKEY
+  })
+  .rpc({commitment});
+  return tx;
+}
+export async function updateFeeDown(
+  isBuy: boolean,
+  newFee: number,
+  marketName: string,
+  program: anchor.Program<Limitless>,
+  commitment: anchor.web3.Commitment,
+) : Promise<string> {
+  let [marketTrackerBaseAddress, marketTrackerBaseBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [Buffer.from(TRACKER_ID)],
+    program.programId
+  );
+  let [marketStateAddress, toMarketBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [marketTrackerBaseAddress.toBuffer(), Buffer.from(marketName)],
+    program.programId
+  );
+  const tx = await program.methods
+      .updateFeeDown(newFee, isBuy)
+      .accounts({
+        user: program.provider.publicKey,
+        marketTrackerBase: marketTrackerBaseAddress,
+        marketState: marketStateAddress,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      })
+      .rpc({commitment});
+  return tx;
+}
+export async function transferToFloor(
+    amount: number,
+    marketName: string,
+    program: anchor.Program<Limitless>,
+    commitment: anchor.web3.Commitment,
+    userQuoteToken: anchor.web3.PublicKey,
+) : Promise<string> {
+  let [marketTrackerBaseAddress, marketTrackerBaseBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [Buffer.from(TRACKER_ID)],
+    program.programId
+  );
+  let [marketStateAddress, toMarketBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [marketTrackerBaseAddress.toBuffer(), Buffer.from(marketName)],
+    program.programId
+  );
+  let marketState = await program.account.marketState.fetch(marketStateAddress);
+  const tx = await program.methods.transferToFloor(new anchor.BN(amount)).accounts({
+    user: program.provider.publicKey,
+    marketTrackerBase: marketTrackerBaseAddress,
+    marketState: marketStateAddress,
+    quoteTokenFloorVault: marketState.quoteMintFloorTokenAddress,
+    userQuoteToken: userQuoteToken,
+    tokenProgram: TOKEN_PROGRAM_ID,
+    systemProgram: anchor.web3.SystemProgram.programId
+  }).rpc({commitment});
+  return tx;
+}
+export async function updateFeeReceiveaddress(
+    marketName: string,
+    program: anchor.Program<Limitless>,
+    commitment: anchor.web3.Commitment,
+    newAddress: anchor.web3.PublicKey,
+) : Promise<string> {
+  let [marketTrackerBaseAddress, marketTrackerBaseBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [Buffer.from(TRACKER_ID)],
+    program.programId
+  );
+  let [marketStateAddress, toMarketBump] = await anchor.web3.PublicKey.findProgramAddress(
+    [marketTrackerBaseAddress.toBuffer(), Buffer.from(marketName)],
+    program.programId
+  );
+  const tx = await program.methods.updateFeeReceiveAddress().accounts({
+    user: program.provider.publicKey,
+    marketTrackerBase: marketTrackerBaseAddress,
+    marketState: marketStateAddress,
+    newFeeReceiveAddress: newAddress,
+    tokenProgram: TOKEN_PROGRAM_ID,
+    systemProgram: anchor.web3.SystemProgram.programId
+  }).rpc({commitment});
+  return tx
 }
 
 //calculations

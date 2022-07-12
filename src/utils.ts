@@ -13,7 +13,7 @@ export async function generateTrackerAddresses(
       );
       let index = x - from;
       addresses[index] = marketTrackerAddress;
-    }
+    };
     return addresses;
 }
 

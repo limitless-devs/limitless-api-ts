@@ -454,6 +454,123 @@ export type Limitless = {
           "type": "i64"
         }
       ]
+    },
+    {
+      "name": "updateFeeDown",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "marketTrackerBase",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "marketState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newFee",
+          "type": "u32"
+        },
+        {
+          "name": "isBuy",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "transferToFloor",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "marketTrackerBase",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "marketState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quoteTokenFloorVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userQuoteToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "updateFeeReceiveAddress",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "marketTrackerBase",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "marketState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newFeeReceiveAddress",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -870,86 +987,91 @@ export type Limitless = {
     },
     {
       "code": 6004,
+      "name": "InvalidAmount",
+      "msg": "Invalid amount!"
+    },
+    {
+      "code": 6005,
       "name": "NotAvailable",
       "msg": "Not available!"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "InvalidQuoteMint",
       "msg": "Invalid quote mint!"
     },
     {
-      "code": 6006,
+      "code": 6007,
       "name": "AlreadyClaimed",
       "msg": "Premint already claimed!"
     },
     {
-      "code": 6007,
+      "code": 6008,
       "name": "InvalidFee",
       "msg": "Invalid fee!"
     },
     {
-      "code": 6008,
+      "code": 6009,
       "name": "InsuficcientBase",
       "msg": "Insufficient base liquidity!"
     },
     {
-      "code": 6009,
+      "code": 6010,
       "name": "BaseAndQuoteMatch",
       "msg": "Base and quote address match!"
     },
     {
-      "code": 6010,
+      "code": 6011,
       "name": "TickAndSizeCombo",
       "msg": "Tick and size error!"
     },
     {
-      "code": 6011,
+      "code": 6012,
       "name": "SlippageLimitHit",
       "msg": "Slippage Limit Hit!"
     },
     {
-      "code": 6012,
+      "code": 6013,
       "name": "InvalidQuantity",
       "msg": "Invalid quantity!"
     },
     {
-      "code": 6013,
+      "code": 6014,
       "name": "InvalidMaxCost",
       "msg": "Invalid max cost!"
     },
     {
-      "code": 6014,
+      "code": 6015,
       "name": "InvalidStartPrice",
       "msg": "Invalid start price!"
     },
     {
-      "code": 6015,
+      "code": 6016,
       "name": "InvalidPriceTick",
       "msg": "Invalid price tick!"
     },
     {
-      "code": 6016,
+      "code": 6017,
       "name": "InvalidMinimumTradeSize",
       "msg": "Invalid minimum trade size!"
     },
     {
-      "code": 6017,
+      "code": 6018,
       "name": "InvalidOrderSize",
       "msg": "Invalid order size!"
     },
     {
-      "code": 6018,
+      "code": 6019,
       "name": "ArithmeticError",
       "msg": "Arithmetic Error"
     },
     {
-      "code": 6019,
+      "code": 6020,
       "name": "OverflowError",
       "msg": "Overflow"
     },
     {
-      "code": 6020,
+      "code": 6021,
       "name": "UnderflowError",
       "msg": "Underflow"
     }
@@ -1412,6 +1534,123 @@ export const IDL: Limitless = {
           "type": "i64"
         }
       ]
+    },
+    {
+      "name": "updateFeeDown",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "marketTrackerBase",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "marketState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newFee",
+          "type": "u32"
+        },
+        {
+          "name": "isBuy",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "transferToFloor",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "marketTrackerBase",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "marketState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "quoteTokenFloorVault",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userQuoteToken",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "updateFeeReceiveAddress",
+      "accounts": [
+        {
+          "name": "user",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "marketTrackerBase",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "marketState",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "newFeeReceiveAddress",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -1828,86 +2067,91 @@ export const IDL: Limitless = {
     },
     {
       "code": 6004,
+      "name": "InvalidAmount",
+      "msg": "Invalid amount!"
+    },
+    {
+      "code": 6005,
       "name": "NotAvailable",
       "msg": "Not available!"
     },
     {
-      "code": 6005,
+      "code": 6006,
       "name": "InvalidQuoteMint",
       "msg": "Invalid quote mint!"
     },
     {
-      "code": 6006,
+      "code": 6007,
       "name": "AlreadyClaimed",
       "msg": "Premint already claimed!"
     },
     {
-      "code": 6007,
+      "code": 6008,
       "name": "InvalidFee",
       "msg": "Invalid fee!"
     },
     {
-      "code": 6008,
+      "code": 6009,
       "name": "InsuficcientBase",
       "msg": "Insufficient base liquidity!"
     },
     {
-      "code": 6009,
+      "code": 6010,
       "name": "BaseAndQuoteMatch",
       "msg": "Base and quote address match!"
     },
     {
-      "code": 6010,
+      "code": 6011,
       "name": "TickAndSizeCombo",
       "msg": "Tick and size error!"
     },
     {
-      "code": 6011,
+      "code": 6012,
       "name": "SlippageLimitHit",
       "msg": "Slippage Limit Hit!"
     },
     {
-      "code": 6012,
+      "code": 6013,
       "name": "InvalidQuantity",
       "msg": "Invalid quantity!"
     },
     {
-      "code": 6013,
+      "code": 6014,
       "name": "InvalidMaxCost",
       "msg": "Invalid max cost!"
     },
     {
-      "code": 6014,
+      "code": 6015,
       "name": "InvalidStartPrice",
       "msg": "Invalid start price!"
     },
     {
-      "code": 6015,
+      "code": 6016,
       "name": "InvalidPriceTick",
       "msg": "Invalid price tick!"
     },
     {
-      "code": 6016,
+      "code": 6017,
       "name": "InvalidMinimumTradeSize",
       "msg": "Invalid minimum trade size!"
     },
     {
-      "code": 6017,
+      "code": 6018,
       "name": "InvalidOrderSize",
       "msg": "Invalid order size!"
     },
     {
-      "code": 6018,
+      "code": 6019,
       "name": "ArithmeticError",
       "msg": "Arithmetic Error"
     },
     {
-      "code": 6019,
+      "code": 6020,
       "name": "OverflowError",
       "msg": "Overflow"
     },
     {
-      "code": 6020,
+      "code": 6021,
       "name": "UnderflowError",
       "msg": "Underflow"
     }
