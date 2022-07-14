@@ -1,17 +1,17 @@
 ## limitless-api-ts
 
+This typescript api client will allow you to create, manage and trade markets on the Limitless Protocol on Solana. 
+
+Check out the [limitless-trader](https://github.com/limitless-devs/limitless-trader) repository for example implentations.
+
+## Quick Usage Ovierview 
+
 ```
 npm i limitless-api-ts
 ```
 ```
 yarn add limitless-api-ts
 ```
-
-This typescript api client will allow you to create, manage and trade markets on the Limitless Protocol. 
-
-Check out the [limitless-trader](https://github.com/limitless-devs/limitless-trader) repository for example implentations.
-
-## Quick Usage Ovierview 
 
 ```
 import {
