@@ -388,6 +388,7 @@ export async function updateFeeReceiveaddress(
     program: anchor.Program<Limitless>,
     commitment: anchor.web3.Commitment,
     newAddress: anchor.web3.PublicKey,
+    preInstructions?: anchor.web3.TransactionInstruction[]
 ) : Promise<string> {
   let [marketTrackerBaseAddress, marketTrackerBaseBump] = await anchor.web3.PublicKey.findProgramAddress(
     [Buffer.from(TRACKER_ID)],
@@ -404,7 +405,9 @@ export async function updateFeeReceiveaddress(
     newFeeReceiveAddress: newAddress,
     tokenProgram: TOKEN_PROGRAM_ID,
     systemProgram: anchor.web3.SystemProgram.programId
-  }).rpc({commitment});
+  })
+  .preInstructions(preInstructions ?? [])
+  .rpc({commitment});
   return tx
 }
 
